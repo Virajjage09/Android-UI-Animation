@@ -3,4 +3,6 @@
     <string name="txt_title_friends">My Friends</string>
     <string name="msg_request_failed">Unable to process your request, Please try again later.</string>
     <string name="hint_search">Search</string>
+    <string name="txt_no_records">Records not found</string>
+    <string name="msg_query_blacklisted">Searched query is Blacklisted</string>
 </resources>

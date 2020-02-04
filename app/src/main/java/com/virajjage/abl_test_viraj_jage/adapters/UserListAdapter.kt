@@ -14,10 +14,15 @@ import com.virajjage.abl_test_viraj_jage.models.User
 
 class UserListAdapter(
     val mContext: Context,
-    val userList: List<User>
+    var userList: ArrayList<User>
 ) :
     RecyclerView.Adapter<UserListAdapter.UserListHolder>() {
 
+    private lateinit var filteredUserList: ArrayList<User>
+
+    init {
+        filteredUserList = userList
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserListHolder {
         val itemView: View = LayoutInflater.from(parent.context)
@@ -26,14 +31,18 @@ class UserListAdapter(
     }
 
     override fun getItemCount(): Int {
-        return userList.size
+        return filteredUserList.size
     }
 
     override fun onBindViewHolder(holder: UserListHolder, position: Int) {
-        val user: User = userList[position]
-        loadProfileImage(user.avatar_url, holder.imgProfileImage)
-        holder.tvDisplayName.text = user.display_name
-        holder.tvUserName.text = user.username
+        try {
+            val user: User = filteredUserList[position]
+            loadProfileImage(user.avatar_url, holder.imgProfileImage)
+            holder.tvDisplayName.text = user.display_name
+            holder.tvUserName.text = user.username
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
 

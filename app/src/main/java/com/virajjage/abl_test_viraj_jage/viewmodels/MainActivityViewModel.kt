@@ -22,4 +22,5 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         super.onCleared()
         mCompositeDisposable.clear()
     }
+
 }
