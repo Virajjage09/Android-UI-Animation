@@ -9,4 +9,5 @@
     <color name="shimmer_view_background">#dddddd</color>
     <color name="colorGradient">#eceaeb</color>
     <color name="colorSearchBoxBG">#f7f5f7</color>
+    <color name="colorYellow">#e6bc25</color>
 </resources>

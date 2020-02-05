@@ -1,6 +1,5 @@
 package com.virajjage.abl_test_viraj_jage.screens
 
-import android.graphics.Canvas
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -12,25 +11,23 @@ import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
-import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.gson.Gson
 import com.virajjage.abl_test_viraj_jage.R
 import com.virajjage.abl_test_viraj_jage.adapters.UserListAdapter
+import com.virajjage.abl_test_viraj_jage.helper.MyButton
+import com.virajjage.abl_test_viraj_jage.helper.SwipeHelper
+import com.virajjage.abl_test_viraj_jage.interfaces.SwipeButtonClickListener
 import com.virajjage.abl_test_viraj_jage.models.BlackListedItem
 import com.virajjage.abl_test_viraj_jage.models.User
 import com.virajjage.abl_test_viraj_jage.models.UserResponseModel
 import com.virajjage.abl_test_viraj_jage.roomdb.UserDatabase
-import com.virajjage.abl_test_viraj_jage.utils.SwipeController
-import com.virajjage.abl_test_viraj_jage.utils.SwipeControllerActions
 import com.virajjage.abl_test_viraj_jage.viewmodels.MainActivityViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
@@ -41,11 +38,8 @@ import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var collapsingToolbarLayout: CollapsingToolbarLayout
-    private lateinit var recUserList: RecyclerView
     private lateinit var userAdapter: UserListAdapter
     private lateinit var mainActivityViewModel: MainActivityViewModel
-    private lateinit var edtSearch: EditText
     private var searchedText = ""
     private lateinit var database: UserDatabase
     private lateinit var defaultUserList: ArrayList<User>
@@ -55,26 +49,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //https://github.com/codepath/android_guides/wiki/Handling-Scrolls-with-CoordinatorLayout
-
-        //https://codeburst.io/android-swipe-menu-with-recyclerview-8f28a235ff28
-
         initViews()
         initListener()
         initValues()
     }
 
     private fun initViews() {
-        recUserList = findViewById(R.id.recUserList)
-        edtSearch = findViewById(R.id.edtSearch)
+        setSupportActionBar(toolbar)
         recUserList.layoutManager = LinearLayoutManager(this)
-
         this.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
 
-        collapsingToolbarLayout = findViewById(R.id.collapsing_toolbar)
-        collapsingToolbarLayout.isTitleEnabled = false
-
-        //collapsingToolbarLayout.title = resources.getString(R.string.txt_title_friends)
         val title = resources.getString(R.string.txt_title_friends)
         val wordToSpan = SpannableString(title)
         wordToSpan.setSpan(
@@ -84,17 +68,16 @@ class MainActivity : AppCompatActivity() {
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
 
-        collapsingToolbarLayout.title = wordToSpan
-        collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.coll_toolbar_title)
-        collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.exp_toolbar_title)
-        //setupRecyclerView()
+        collapsing_toolbar.title = wordToSpan
+        collapsing_toolbar.setCollapsedTitleTextAppearance(R.style.coll_toolbar_title)
+        collapsing_toolbar.setExpandedTitleTextAppearance(R.style.exp_toolbar_title)
 
     }
 
     private fun initValues() {
         mainActivityViewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
         database = UserDatabase(this)
-
+        setupRecyclerView()
         /*val userResponseModel: UserResponseModel =
             Gson().fromJson(TestConstant.apiResponse, UserResponseModel::class.java)*/
         callUserListAPI()
@@ -214,6 +197,8 @@ class MainActivity : AppCompatActivity() {
         if (filteredList.isNotEmpty()) {
             setAdapter(filteredList)
         } else {
+            tvNoRecords.visibility = View.VISIBLE
+            recUserList.visibility = View.GONE
             val blackListedItem = BlackListedItem()
             blackListedItem.blackListedItem = searchedText
 
@@ -225,29 +210,58 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setAdapter(userList: ArrayList<User>) {
+        recUserList.visibility = View.VISIBLE
         userAdapter = UserListAdapter(this, userList)
         recUserList.recycledViewPool.clear()
         recUserList.adapter = userAdapter
     }
 
     private fun setupRecyclerView() {
-        var swipeController = SwipeController(object : SwipeControllerActions() {
-            override fun onRightAddClicked(position: Int) {
 
+        val swipe = object : SwipeHelper(this, recUserList, 200) {
+            override fun instantiateMyButton(
+                viewHolder: RecyclerView.ViewHolder,
+                buffer: MutableList<MyButton>
+            ) {
+
+                buffer.add(
+                    MyButton(this@MainActivity,
+                        "Delete",
+                        30,
+                        R.drawable.ic_action_delete,
+                        ContextCompat.getColor(this@MainActivity, R.color.colorBlack),
+                        object : SwipeButtonClickListener {
+                            override fun onClick(pos: Int) {
+                                Toast.makeText(
+                                    this@MainActivity,
+                                    "Delete Clicked $pos",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+
+                        }
+                    ))
+
+                buffer.add(
+                    MyButton(this@MainActivity,
+                        "Done",
+                        30,
+                        R.drawable.ic_action_done,
+                        ContextCompat.getColor(this@MainActivity, R.color.colorYellow),
+                        object : SwipeButtonClickListener {
+                            override fun onClick(pos: Int) {
+                                Toast.makeText(
+                                    this@MainActivity,
+                                    "Done Clicked $pos",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+
+                        }
+                    ))
             }
 
-            override fun onRightDeleteClicked(position: Int) {
 
-            }
-        })
-        val itemTouchHelper = ItemTouchHelper(swipeController)
-        itemTouchHelper.attachToRecyclerView(recUserList)
-
-        recUserList.addItemDecoration(object : RecyclerView.ItemDecoration() {
-            override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
-                swipeController.onDraw(c)
-            }
-        })
+        }
     }
-
 }
