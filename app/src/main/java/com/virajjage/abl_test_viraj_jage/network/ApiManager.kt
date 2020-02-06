@@ -1,5 +1,6 @@
 package com.virajjage.abl_test_viraj_jage.network
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.virajjage.abl_test_viraj_jage.models.UserResponseModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -29,6 +30,7 @@ object ApiManager {
     }
 
     private fun onError(error: Throwable) {
+        Log.d("Error",error.message.toString())
         data.value = null
     }
 

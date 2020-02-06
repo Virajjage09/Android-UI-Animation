@@ -214,7 +214,12 @@ abstract class SwipeHelper(
             val left = right - dButtonWidth
             button.onDraw(
                 c,
-                RectF(left, itemView.top.toFloat(), right, itemView.bottom.toFloat()),
+                RectF(
+                    left + 10,
+                    itemView.top.toFloat() + 50,
+                    right,
+                    itemView.bottom.toFloat() - 30
+                ),
                 pos
             )
             right = left

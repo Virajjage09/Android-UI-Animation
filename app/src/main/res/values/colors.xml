@@ -10,4 +10,5 @@
     <color name="colorGradient">#eceaeb</color>
     <color name="colorSearchBoxBG">#f7f5f7</color>
     <color name="colorYellow">#e6bc25</color>
+    <color name="colorLightBlack">#333030</color>
 </resources>

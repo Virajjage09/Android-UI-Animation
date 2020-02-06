@@ -1,6 +1,5 @@
 package com.virajjage.abl_test_viraj_jage.roomdb
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query

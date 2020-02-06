@@ -1,14 +1,13 @@
 package com.virajjage.abl_test_viraj_jage.screens
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
-import android.text.Spannable
-import android.text.SpannableString
 import android.text.TextWatcher
-import android.text.style.ForegroundColorSpan
 import android.util.Log
+import android.view.Menu
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
@@ -60,30 +59,28 @@ class MainActivity : AppCompatActivity() {
         this.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
 
         val title = resources.getString(R.string.txt_title_friends)
-        val wordToSpan = SpannableString(title)
-        wordToSpan.setSpan(
-            ForegroundColorSpan(ContextCompat.getColor(this, R.color.colorBlack)),
-            0,
-            title.length,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
 
-        collapsing_toolbar.title = wordToSpan
+        collapsing_toolbar.title = title
         collapsing_toolbar.setCollapsedTitleTextAppearance(R.style.coll_toolbar_title)
         collapsing_toolbar.setExpandedTitleTextAppearance(R.style.exp_toolbar_title)
 
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_star_border)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     private fun initValues() {
         mainActivityViewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
         database = UserDatabase(this)
         setupRecyclerView()
-        /*val userResponseModel: UserResponseModel =
-            Gson().fromJson(TestConstant.apiResponse, UserResponseModel::class.java)*/
+
         callUserListAPI()
 
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu,menu)
+        return super.onCreateOptionsMenu(menu)
+    }
 
     private fun initListener() {
         edtSearch.addTextChangedListener(object : TextWatcher {
@@ -116,7 +113,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private suspend fun getBlackListedItem() {
-        var list = database.userDBAccess().getBlackListedItem(searchedText)
+        val list = database.userDBAccess().getBlackListedItem(searchedText)
         Log.d("BlackListedItem", "BlackListedItem Size ${list.size}")
         getUsersList(list)
     }
@@ -159,7 +156,7 @@ class MainActivity : AppCompatActivity() {
             }
             if (userResponseModel != null) {
                 if (userResponseModel.ok) {
-                    var response = Gson().toJson(userResponseModel)
+                    val response = Gson().toJson(userResponseModel)
                     Log.d("API Response", "API Response :$response")
                     defaultUserList = userResponseModel.users
                     if (defaultUserList.isNotEmpty()) {
@@ -186,6 +183,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("DefaultLocale")
     private fun filterUsers(userList: ArrayList<User>) {
         val filteredList: ArrayList<User> = ArrayList<User>()
         for (row in userList) {
@@ -218,7 +216,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
 
-        val swipe = object : SwipeHelper(this, recUserList, 200) {
+        object : SwipeHelper(this, recUserList, 200) {
             override fun instantiateMyButton(
                 viewHolder: RecyclerView.ViewHolder,
                 buffer: MutableList<MyButton>

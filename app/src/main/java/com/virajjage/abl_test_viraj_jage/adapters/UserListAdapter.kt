@@ -13,16 +13,12 @@ import com.virajjage.abl_test_viraj_jage.R
 import com.virajjage.abl_test_viraj_jage.models.User
 
 class UserListAdapter(
-    val mContext: Context,
-    var userList: ArrayList<User>
+    private val mContext: Context,
+    userList: ArrayList<User>
 ) :
     RecyclerView.Adapter<UserListAdapter.UserListHolder>() {
 
-    private lateinit var filteredUserList: ArrayList<User>
-
-    init {
-        filteredUserList = userList
-    }
+    private var filteredUserList: ArrayList<User> = userList
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserListHolder {
         val itemView: View = LayoutInflater.from(parent.context)
@@ -47,15 +43,10 @@ class UserListAdapter(
 
 
     class UserListHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var imgProfileImage: ImageView
-        var tvDisplayName: TextView
-        var tvUserName: TextView
+        var imgProfileImage: ImageView = itemView.findViewById(R.id.imgProfilePic)
+        var tvDisplayName: TextView = itemView.findViewById(R.id.tvDisplayName)
+        var tvUserName: TextView = itemView.findViewById(R.id.tvUserName)
 
-        init {
-            imgProfileImage = itemView.findViewById(R.id.imgProfilePic)
-            tvDisplayName = itemView.findViewById(R.id.tvDisplayName)
-            tvUserName = itemView.findViewById(R.id.tvUserName)
-        }
     }
 
     private fun loadProfileImage(url: String, imageView: ImageView) {

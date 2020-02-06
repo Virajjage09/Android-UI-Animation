@@ -1,7 +1,6 @@
 package com.virajjage.abl_test_viraj_jage.helper
 
 import android.content.Context
-import android.content.res.Resources
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
@@ -18,11 +17,7 @@ class MyButton(
 
     private var pos: Int = 0
     private var clickRegion: RectF? = null
-    private val resources: Resources
 
-    init {
-        resources = context.resources
-    }
 
     fun onClick(x: Float, y: Float): Boolean {
 
@@ -49,8 +44,8 @@ class MyButton(
         p.textAlign = Paint.Align.LEFT
         p.getTextBounds(text, 0, text.length, r)
 
-        var x = 0f
-        var y = 0f
+        val x: Float
+        val y: Float
         if (imageResId == 0) {
             x = cWidth / 2f - r.width() / 2f - r.left.toFloat()
             y = cHeight / 2f - r.height() / 2f - r.bottom.toFloat()
@@ -59,7 +54,12 @@ class MyButton(
 
             val d = ContextCompat.getDrawable(context, imageResId)
             val bitmap = drawableToBitmap(d)
-            c.drawBitmap(bitmap, (rectF.left + rectF.right) / 2, (rectF.top + rectF.bottom) / 2, p)
+            c.drawBitmap(
+                bitmap,
+                ((rectF.left - 60) + rectF.right) / 2,
+                ((rectF.top - 60) + rectF.bottom) / 2,
+                p
+            )
         }
 
         clickRegion = rectF
